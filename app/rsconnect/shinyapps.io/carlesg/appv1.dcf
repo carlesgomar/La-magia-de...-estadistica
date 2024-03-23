@@ -1,0 +1,13 @@
+name: appv1
+title: appv1
+username: carlesg
+account: carlesg
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 11386802
+bundleId: 8381701
+url: https://carlesg.shinyapps.io/appv1/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: www/Rlogo.jpg
