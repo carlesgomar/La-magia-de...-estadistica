@@ -31,18 +31,15 @@ ui <- navbarPage(
              ),
              # Enlace a la documentación del paquete 'Estadistica'
              tags$li(
-               HTML("<a href='https://cran.r-project.org/web/packages/estadistica/estadistica.pdf' target='_blank'>Documentación del paquete 'Estadistica'</a>")
-             )
-           )
-  ),
+               HTML("<a href='https://cran.r-project.org/web/packages/estadistica/estadistica.pdf' target='_blank'>Documentación del paquete 'Estadistica'</a>")))),
   tabPanel("Análisis",
            tabsetPanel(
              tabPanel("Medidas de Posición",
                       sidebarLayout(
                         sidebarPanel(
                           fileInput("file_centralizacion", "Cargar archivo (csv,xlsx,RData)",
-                          buttonLabel = "Buscar fichero",
-                          placeholder = "Ningún archivo seleccionado"),
+                                    buttonLabel = "Buscar fichero",
+                                    placeholder = "Ningún archivo seleccionado"),
                           selectInput("variable_centralizacion", "Variable:",
                                       choices = NULL),
                           checkboxGroupInput("centralizacion", "Medidas de tendencia central:",
@@ -51,7 +48,6 @@ ui <- navbarPage(
                                                          "Moda" = "moda")),
                           checkboxGroupInput("no_centralizacion", "Medidas de tendencia no central:",
                                              choices = c("Cuantiles" = "cuantiles")),
-                          # Campo de entrada para los cuantiles
                           conditionalPanel(
                             condition = "input.no_centralizacion.includes('cuantiles')",
                             textInput("cuantiles_input", "Cortes para Cuantiles:", value = "0.25, 0.5, 0.75"),
@@ -111,226 +107,219 @@ ui <- navbarPage(
                                       conditionalPanel(
                                         condition = "input.calcular_dispersion > 0",
                                         h4("Medidas de Dispersión"),
-                                        tableOutput("data_dispersion")
-                                      )
-                                    )
-                                  )
-                      ),tabPanel("Medidas de forma",
-                                 sidebarLayout(
-                                   sidebarPanel(
-                                     fileInput("file_forma", "Cargar archivo (csv,xlsx,RData)",
-                                               buttonLabel = "Buscar fichero",
-                                               placeholder = "Ningún archivo seleccionado"),
-                                     selectInput("variable_forma", "Variable:",
-                                                 choices = NULL),
-                                     checkboxGroupInput("forma", "Medidas de forma:",
-                                                        choices = c("Asimetria y Curtosis" = "medidas_forma")),
-                                     conditionalPanel(
-                                       condition = "input.forma.includes('medidas_forma')",
-                                       selectInput("pesos_var3", "Variable de pesos:",
-                                                   choices = NULL),
-                                       checkboxInput("alternativa",label = HTML("<div style='text-align: justify;'>Mostrar alternativa <small style='color: #888;'>(Muestra el coeficiente de asimetría y curtosis calculado según SPSS y EXCEL. Se facilita también los correspondientes errores típicos)</small></div>"), FALSE)
-                                     ),
-                                     actionButton("calcular_forma", "Calcular")
-                                   ),
-                                   mainPanel(br(" "),
-                                             tableOutput("primeras_filas_forma"),  
-                                             conditionalPanel(condition = "input.calcular_forma > 0",
-                                                              h4("Medidas de forma"),
-                                                              tableOutput("data_forma"),
-                                                              tableOutput("data_forma_alternativa")
-                                             )
-                                   )
-                                 )),tabPanel("Relación entre variables",
-                                             sidebarLayout(
-                                               sidebarPanel(
-                                                 fileInput("file_relacion", "Cargar archivo (csv,xlsx,RData)",
-                                                           buttonLabel = "Buscar fichero",
-                                                           placeholder = "Ningún archivo seleccionado"),
-                                                 h4("Matrices de covarianza y correlación"),
-                                                 actionButton("calcular_matriz_correlacion", "Calcular matriz de correlación"),
-                                                 br(" "),
-                                                 selectInput("tipo_covarianza2",label = HTML("Tipo cálculo <small style='color: #888;'>(matriz.covar)</small>")
-                                                             ,choices = c("Muestral" = "muestral", "Cuasi" = "cuasi")),
-                                                 actionButton("calcular_matriz_covarianzas", "Calcular matriz de covarianza"),
-                                                 br(" "),
-                                                 h4("Covarianza y correlación"),
-                                                 selectInput("var1_relacion", "Variable 1:", choices = NULL),
-                                                 selectInput("var2_relacion", "Variable 2:", choices = NULL),
-                                                 selectInput("tipo_covarianza1",label = HTML("Tipo cálculo <small style='color: #888;'>(covar)</small>"),
-                                                             choices = c("Muestral" = "muestral", "Cuasi" = "cuasi")),
-                                                 selectInput("pesos_var4", "Variable de pesos:",
-                                                             choices = NULL),
-                                                 actionButton("calcular_correlacion", "Calcular correlación"),
-                                                 br(" "),
-                                                 actionButton("calcular_covarianza", "Calcular covarianza"),
-                                                 br(" "), 
-                                                 h4("Regresión lineal simple"),
-                                                 selectInput("var_independiente_regresion_simple", "Variable independiente:", choices = NULL),
-                                                 selectInput("var_dependiente_regresion_simple", "Variable dependiente:", choices = NULL),
-                                                 numericInput("confianza_regresion_simple", "Confianza:", value = 0.95, min = 0, max = 1, step = 0.01),
-                                                 checkboxInput("inferencia_regresion_simple", "Resultados inferenciales", value = FALSE),
-                                                 checkboxInput("grafico_regresion_simple", "Mostrar gráfico", value = FALSE),
-                                                 actionButton("calcular_regresion_simple", "Regresión Simple")
-                                               ),
-                                               mainPanel(
-                                                 br(" "),
-                                                 tableOutput("primeras_filas_relacion"),
-                                                 conditionalPanel(
-                                                   condition = "input.calcular_matriz_correlacion > 0",
-                                                   h4("Matriz de correlación"),  
-                                                   DTOutput("matriz_correlacion_output")
-                                                 ),
-                                                 conditionalPanel(
-                                                   condition = "input.calcular_matriz_covarianzas > 0",
-                                                   br(" "),
-                                                   h4("Matriz de covarianza"),  
-                                                   DTOutput("matriz_covarianzas_output")
-                                                 ),
-                                                 conditionalPanel(
-                                                   condition = "input.calcular_correlacion > 0",
-                                                   br(" "),
-                                                   h4("Correlación entre variables"),
-                                                   verbatimTextOutput("correlacion_output")
-                                                 ),
-                                                 conditionalPanel(
-                                                   condition = "input.calcular_covarianza > 0",
-                                                   h4("Covarianza entre variables"),
-                                                   verbatimTextOutput("covarianza_output")
-                                                 ),
-                                                 conditionalPanel(
-                                                   condition = "input.calcular_regresion_simple > 0",
-                                                   br(" "),
-                                                   h4("Regresión Simple"),
-                                                   DTOutput("regresion_simple_output"),
-                                                   conditionalPanel(
-                                                     condition = "input.inferencia_regresion_simple",
-                                                     h4("Resumen"),
-                                                     DTOutput("regresion_simple_output_parcial"),
-                                                     br(" "),
-                                                     h4("ANOVA"),
-                                                     DTOutput("regresion_simple_output_ANOVA"),
-                                                     br(" "),
-                                                     h4("Modelo estimado"),
-                                                     DTOutput("regresion_simple_output_Modelo")),
-                                                   br(" "),
-                                                   conditionalPanel(
-                                                     condition= "input.grafico_regresion_simple",
-                                                     plotOutput("regresion_simple_plot"))
-                                                 )
-                                               )
-                                             )
-                                 ),tabPanel("Tablas de frecuencias",
-                                            sidebarLayout(
-                                              sidebarPanel( fileInput("file_tablas_frecuencias", "Cargar archivo (csv,xlsx,RData)",
-                                                                      buttonLabel = "Buscar fichero",
-                                                                      placeholder = "Ningún archivo seleccionado"),
-                                                            tags$h4(style = "font-size: 16px; color: black;",
-                                                                     tags$strong("Tabla de frecuencias bidimensionales")),
-                                                             selectInput("var_filas", "Variable para filas:",
-                                                                         choices = NULL),
-                                                             selectInput("var_columnas", "Variable para columnas:",
-                                                                         choices = NULL),
-                                                             selectInput("distribucion", "Tipo de distribución:",
-                                                                         choices = c("Cruzada" = "cruzada",
-                                                                                     "Condicionada" = "condicionada")),
-                                                             selectInput("frecuencias", "Tipo de frecuencias:",
-                                                                         choices = c("Absolutas" = "absolutas",
-                                                                                     "Relativas" = "relativas")),
-                                                             actionButton("calcular_tablas_frecuencias", "Calcular"),
-                                                             tags$h4(style = "font-size: 16px; color: black;",
-                                                                     tags$strong("Tabla de frecuencias unidimensional")),
-                                                             selectInput("var_tabla_unidimensional", "Variable para tabla unidimensional:", choices = NULL),
-                                                             checkboxInput("agrupar_checkbox", "No agrupar", value = FALSE),
-                                                             checkboxInput("grafico_checkbox", "Mostrar gráfico", value = FALSE),
-                                                             actionButton("calcular_tabla_unidimensional", "Calcular")
-                                              ),
-                                              mainPanel(
-                                                br(" "),
-                                                tableOutput("primeras_filas_tablas_frecuencias"),
+                                        tableOutput("data_dispersion"))))),
+             tabPanel("Medidas de forma",
+                      sidebarLayout(
+                        sidebarPanel(
+                          fileInput("file_forma", "Cargar archivo (csv,xlsx,RData)",
+                                    buttonLabel = "Buscar fichero",
+                                    placeholder = "Ningún archivo seleccionado"),
+                          selectInput("variable_forma", "Variable:",
+                                      choices = NULL),
+                          checkboxGroupInput("forma", "Medidas de forma:",
+                                             choices = c("Asimetria y Curtosis" = "medidas_forma")),
+                          conditionalPanel(
+                            condition = "input.forma.includes('medidas_forma')",
+                            selectInput("pesos_var3", "Variable de pesos:",
+                                        choices = NULL),
+                            checkboxInput("alternativa",label = HTML("<div style='text-align: justify;'>Mostrar alternativa <small style='color: #888;'>(Muestra el coeficiente de asimetría y curtosis calculado según SPSS y EXCEL. Se facilita también los correspondientes errores típicos)</small></div>"), FALSE)
+                          ),
+                          actionButton("calcular_forma", "Calcular")
+                        ),
+                        mainPanel(br(" "),
+                                  tableOutput("primeras_filas_forma"),  
+                                  conditionalPanel(condition = "input.calcular_forma > 0",
+                                                   h4("Medidas de forma"),
+                                                   tableOutput("data_forma"),
+                                                   tableOutput("data_forma_alternativa"))))),
+             tabPanel("Relación entre variables",
+                      sidebarLayout(
+                        sidebarPanel(
+                          fileInput("file_relacion", "Cargar archivo (csv,xlsx,RData)",
+                                    buttonLabel = "Buscar fichero",
+                                    placeholder = "Ningún archivo seleccionado"),
+                          h4("Matrices de covarianza y correlación"),
+                          actionButton("calcular_matriz_correlacion", "Calcular matriz de correlación"),
+                          br(" "),
+                          selectInput("tipo_covarianza2",label = HTML("Tipo cálculo <small style='color: #888;'>(matriz.covar)</small>")
+                                      ,choices = c("Muestral" = "muestral", "Cuasi" = "cuasi")),
+                          actionButton("calcular_matriz_covarianzas", "Calcular matriz de covarianza"),
+                          br(" "),
+                          h4("Covarianza y correlación"),
+                          selectInput("var1_relacion", "Variable 1:", choices = NULL),
+                          selectInput("var2_relacion", "Variable 2:", choices = NULL),
+                          selectInput("tipo_covarianza1",label = HTML("Tipo cálculo <small style='color: #888;'>(covar)</small>"),
+                                      choices = c("Muestral" = "muestral", "Cuasi" = "cuasi")),
+                          selectInput("pesos_var4", "Variable de pesos:",
+                                      choices = NULL),
+                          actionButton("calcular_correlacion", "Calcular correlación"),
+                          br(" "),
+                          actionButton("calcular_covarianza", "Calcular covarianza"),
+                          br(" "), 
+                          h4("Regresión lineal simple"),
+                          selectInput("var_independiente_regresion_simple", "Variable independiente:", choices = NULL),
+                          selectInput("var_dependiente_regresion_simple", "Variable dependiente:", choices = NULL),
+                          numericInput("confianza_regresion_simple", "Confianza:", value = 0.95, min = 0, max = 1, step = 0.01),
+                          checkboxInput("inferencia_regresion_simple", "Resultados inferenciales", value = FALSE),
+                          checkboxInput("grafico_regresion_simple", "Mostrar gráfico", value = FALSE),
+                          actionButton("calcular_regresion_simple", "Regresión Simple")
+                        ),
+                        mainPanel(
+                          br(" "),
+                          tableOutput("primeras_filas_relacion"),
+                          conditionalPanel(
+                            condition = "input.calcular_matriz_correlacion > 0",
+                            h4("Matriz de correlación"),  
+                            DTOutput("matriz_correlacion_output")
+                          ),
+                          conditionalPanel(
+                            condition = "input.calcular_matriz_covarianzas > 0",
+                            br(" "),
+                            h4("Matriz de covarianza"),  
+                            DTOutput("matriz_covarianzas_output")
+                          ),
+                          conditionalPanel(
+                            condition = "input.calcular_correlacion > 0",
+                            br(" "),
+                            h4("Correlación entre variables"),
+                            verbatimTextOutput("correlacion_output")
+                          ),
+                          conditionalPanel(
+                            condition = "input.calcular_covarianza > 0",
+                            h4("Covarianza entre variables"),
+                            verbatimTextOutput("covarianza_output")
+                          ),
+                          conditionalPanel(
+                            condition = "input.calcular_regresion_simple > 0",
+                            br(" "),
+                            h4("Regresión Simple"),
+                            DTOutput("regresion_simple_output"),
+                            conditionalPanel(
+                              condition = "input.inferencia_regresion_simple",
+                              h4("Resumen"),
+                              DTOutput("regresion_simple_output_parcial"),
+                              br(" "),
+                              h4("ANOVA"),
+                              DTOutput("regresion_simple_output_ANOVA"),
+                              br(" "),
+                              h4("Modelo estimado"),
+                              DTOutput("regresion_simple_output_Modelo")),
+                            br(" "),
+                            conditionalPanel(
+                              condition= "input.grafico_regresion_simple",
+                              plotOutput("regresion_simple_plot")))))
+             ),tabPanel("Tablas de frecuencias",
+                        sidebarLayout(
+                          sidebarPanel( fileInput("file_tablas_frecuencias", "Cargar archivo (csv,xlsx,RData)",
+                                                  buttonLabel = "Buscar fichero",
+                                                  placeholder = "Ningún archivo seleccionado"),
+                                        tags$h4(style = "font-size: 16px; color: black;",
+                                                tags$strong("Tabla de frecuencias bidimensionales")),
+                                        selectInput("var_filas", "Variable para filas:",
+                                                    choices = NULL),
+                                        selectInput("var_columnas", "Variable para columnas:",
+                                                    choices = NULL),
+                                        selectInput("distribucion", "Tipo de distribución:",
+                                                    choices = c("Cruzada" = "cruzada",
+                                                                "Condicionada" = "condicionada")),
+                                        selectInput("frecuencias", "Tipo de frecuencias:",
+                                                    choices = c("Absolutas" = "absolutas",
+                                                                "Relativas" = "relativas")),
+                                        conditionalPanel(
+                                          condition = "input.distribucion == 'condicionada' && input.frecuencias == 'relativas'",
+                                          numericInput("tipo", "Condicionada por columnas(1) o filas(2):", value = 1)
+                                        ),
+                                        actionButton("calcular_tablas_frecuencias", "Calcular"),
+                                        tags$h4(style = "font-size: 16px; color: black;",
+                                                tags$strong("Tabla de frecuencias unidimensional")),
+                                        selectInput("var_tabla_unidimensional", "Variable para tabla unidimensional:", choices = NULL),
+                                        checkboxInput("agrupar_checkbox", "No agrupar", value = FALSE),
+                                        checkboxInput("grafico_checkbox", "Mostrar gráfico", value = FALSE),
+                                        actionButton("calcular_tabla_unidimensional", "Calcular")
+                          ),
+                          mainPanel(
+                            br(" "),
+                            tableOutput("primeras_filas_tablas_frecuencias"),
+                            conditionalPanel(
+                              condition = "input.calcular_tablas_frecuencias > 0",
+                              h4("Tabla de Frecuencias Bidimensional"),
+                              tableOutput("tabla_frecuencias_bidimensional")
+                            ),conditionalPanel(
+                              condition = "input.calcular_tabla_unidimensional > 0",
+                              h4("Tabla de Frecuencias Unidimensional"),
+                              DTOutput("tabla_frecuencias_unidimensional"),
+                              br(" "),
+                              plotOutput("histograma")
+                            )))),tabPanel("Series temporales",
+                                          sidebarLayout(
+                                            sidebarPanel(tags$h4(style = "font-size: 16px; color: black;",
+                                                                 tags$strong("Serie temporal (Medias móviles centradas)")),
+                                                         fileInput("file_series_temporales", "Cargar archivo (csv,xlsx,RData)",
+                                                                   buttonLabel = "Buscar fichero",
+                                                                   placeholder = "Ningún archivo seleccionado"),
+                                                         selectInput("var_serie", "Variable:",
+                                                                     choices = NULL),
+                                                         numericInput("inicio_anual", "Año de inicio:", value = 1),
+                                                         numericInput("periodo_inicio", "Periodo de inicio:", value = 1),
+                                                         numericInput("frecuencia", label = HTML("<div style='text-align: justify;'>Frecuencia: <small style='color: #888; display: block;'>(Periodicidad de la serie)</small></div>"), value = 4),
+                                                         numericInput("prediccion_tendencia", 
+                                                                      label = HTML("<div style='text-align: justify;'>Valor para predicción de tendencia: <small style='color: #888; display: block;'>(t=0, origen de la serie)</small></div>"), 
+                                                                      value=0),
+                                                         checkboxInput("grafico_series", "Mostrar gráfico", value = FALSE),
+                                                         actionButton("generar_series", "Analizar serie temporal",icon = icon("play"))),
+                                            mainPanel(
+                                              br(" "),
+                                              tableOutput("primeras_observaciones_series"),
+                                              conditionalPanel(
+                                                condition = "input.generar_series > 0",
+                                                h4("IVE (Índice Variación Estacional)"),
+                                                tableOutput("ive_output"),
+                                                h4("Modelo ajustado"),
+                                                tableOutput("modelo_ajuste_output"),
                                                 conditionalPanel(
-                                                  condition = "input.calcular_tablas_frecuencias > 0",
-                                                  h4("Tabla de Frecuencias Bidimensional"),
-                                                  tableOutput("tabla_frecuencias_bidimensional")
-                                                ),conditionalPanel(
-                                                  condition = "input.calcular_tabla_unidimensional > 0",
-                                                  h4("Tabla de Frecuencias Unidimensional"),
-                                                  DTOutput("tabla_frecuencias_unidimensional"),
-                                                  br(" "),
-                                                  plotOutput("histograma")
-                                                )
-                                              )
-                                            )
-                                 ),tabPanel("Series temporales",
-                                            sidebarLayout(
-                                              sidebarPanel(tags$h4(style = "font-size: 16px; color: black;",
-                                                                   tags$strong("Serie temporal (Medias móviles centradas)")),
-                                                           fileInput("file_series_temporales", "Cargar archivo (csv,xlsx,RData)",
-                                                                     buttonLabel = "Buscar fichero",
-                                                                     placeholder = "Ningún archivo seleccionado"),
-                                                           selectInput("var_serie", "Variable:",
-                                                                       choices = NULL),
-                                                           numericInput("inicio_anual", "Año de inicio:", value = 1),
-                                                           numericInput("periodo_inicio", "Periodo de inicio:", value = 1),
-                                                           numericInput("frecuencia", label = HTML("<div style='text-align: justify;'>Frecuencia: <small style='color: #888; display: block;'>(Periodicidad de la serie)</small></div>"), value = 4),
-                                                           numericInput("prediccion_tendencia", 
-                                                                        label = HTML("<div style='text-align: justify;'>Valor para predicción de tendencia: <small style='color: #888; display: block;'>(t=0, origen de la serie)</small></div>"), 
-                                                                        value=0),
-                                                           checkboxInput("grafico_series", "Mostrar gráfico", value = FALSE),
-                                                           actionButton("generar_series", "Analizar serie temporal",icon = icon("play"))),
-                                              mainPanel(
-                                                br(" "),
-                                                tableOutput("primeras_observaciones_series"),
-                                                conditionalPanel(
-                                                  condition = "input.generar_series > 0",
-                                                  h4("IVE (Índice Variación Estacional)"),
-                                                  tableOutput("ive_output"),
-                                                  h4("Modelo ajustado"),
-                                                  tableOutput("modelo_ajuste_output"),
-                                                  conditionalPanel(
                                                   condition= "input.prediccion_tendencia!=0",
                                                   h4("Pronósticos"),
                                                   tableOutput("pronosticos_output"),
                                                   p("( Para el cálculo de la predicción no se tiene en cuenta el efecto estacional)")),
-                                                  br(" "),
-                                                  conditionalPanel(
-                                                    condition = "input.grafico_series > 0",
-                                                    h4("Representación"),
-                                                    tags$small(
-                                                      tags$strong("negro"), ": valores observados de la serie",
-                                                      tags$br(),
-                                                      tags$span("rojo", style = "color: red;"), ": tendencia de la serie",
-                                                      tags$br(),
-                                                      tags$span("azul", style = "color: blue;"), ": ajuste lineal"
-                                                    )),br(" "),
-                                                  plotOutput("grafico_output"))
-                                              )
-                                              
-                                            )))),tabPanel("Resumen estadísticos descriptivos",
-                                                          sidebarLayout(
-                                                            sidebarPanel(
-                                                              fileInput("file_data", "Cargar archivo (csv,xlsx,RData)",
-                                                                        buttonLabel = "Buscar fichero",
-                                                                        placeholder = "Ningún archivo seleccionado"),
-                                                              actionButton("obtener_resumen", "Obtener resumen")
+                                                br(" "),
+                                                conditionalPanel(
+                                                  condition = "input.grafico_series > 0",
+                                                  h4("Representación"),
+                                                  tags$small(
+                                                    tags$strong("negro"), ": valores observados de la serie",
+                                                    tags$br(),
+                                                    tags$span("rojo", style = "color: red;"), ": tendencia de la serie",
+                                                    tags$br(),
+                                                    tags$span("azul", style = "color: blue;"), ": ajuste lineal"
+                                                  )),br(" "),
+                                                plotOutput("grafico_output"))
+                                            )
+                                            
+                                          )))),tabPanel("Resumen estadísticos descriptivos",
+                                                        sidebarLayout(
+                                                          sidebarPanel(
+                                                            fileInput("file_data", "Cargar archivo (csv,xlsx,RData)",
+                                                                      buttonLabel = "Buscar fichero",
+                                                                      placeholder = "Ningún archivo seleccionado"),
+                                                            actionButton("obtener_resumen", "Obtener resumen")
+                                                          ),
+                                                          mainPanel(
+                                                            conditionalPanel(
+                                                              condition = "input.obtener_resumen > 0",
+                                                              br(" "),
+                                                              DTOutput("tabla_resumen")
                                                             ),
-                                                            mainPanel(
-                                                              conditionalPanel(
-                                                                condition = "input.obtener_resumen > 0",
-                                                                br(" "),
-                                                                DTOutput("tabla_resumen")
-                                                              ),
-                                                              conditionalPanel(
-                                                                condition = "input.obtener_resumen == 0",
-                                                                br(" "),
-                                                                p(
-                                                                  style = "text-align: justify;",
-                                                                  "Esta función te permite obtener los principales estadísticos 
-                                                                  descriptivos muestrales en un objeto de tipo data.frame.
-                                                                  Los descriptivos que se obtienen son: media, mínimo, cuartil 1,
-                                                                  mediana, cuartil 3, máximo, varianza muestral, desviación típica
-                                                                  muestral, coeficiente de variación, recorrido intercuartílico,
-                                                                  asimetría, curtosis y moda."))))),
+                                                            conditionalPanel(
+                                                              condition = "input.obtener_resumen == 0",
+                                                              br(" "),
+                                                              p(
+                                                                style = "text-align: justify;",
+                                                                "Esta función te permite obtener los principales estadísticos 
+        descriptivos muestrales en un objeto de tipo data.frame.
+        Los descriptivos que se obtienen son: media, mínimo, cuartil 1,
+        mediana, cuartil 3, máximo, varianza muestral, desviación típica
+        muestral, coeficiente de variación, recorrido intercuartílico,
+        asimetría, curtosis y moda."))))),
   
   tabPanel("Video-tutoriales",
            h2("La magia de ... 'estadistica' (Youtube)"),
@@ -419,7 +408,6 @@ server <- function(input, output, session) {
     req(input$variable_centralizacion)
     req(data_introducidos_centralizacion())
     
-    # Verificar si la variable es cualitativa
     if (!is.numeric(data_introducidos_centralizacion()[[input$variable_centralizacion]])) {
       showModal(modalDialog(
         title = "Error",
@@ -446,7 +434,6 @@ server <- function(input, output, session) {
     
     data2 <- data_introducidos_centralizacion()
     
-    # Ocultar la tabla de los datos introducidos para centralización
     output$primeras_filas_centralizacion <- renderTable(NULL)
     
     funciones_centralizacion <- list()
@@ -532,9 +519,6 @@ server <- function(input, output, session) {
     }
   })
   
-  
-  
-  # Observe file input to read CSV
   observeEvent(input$file_dispersion, {
     if (tools::file_ext(input$file_dispersion$datapath) == "csv") {
       data_introducidos_dispersion(read.csv(input$file_dispersion$datapath))
@@ -552,20 +536,17 @@ server <- function(input, output, session) {
     updateSelectInput(session, "pesos_var", choices = c("NULL", names(data_introducidos_dispersion())))
   })
   
-  # Render first rows of the data
   output$primeras_filas_dispersion <- renderTable({
     if (!is.null(data_introducidos_dispersion())) {
       return(head(data_introducidos_dispersion(), 5))
     }
   })
   
-  # Event handler for dispersion calculation
   observeEvent(input$calcular_dispersion, {
     req(input$file_dispersion)
     req(input$variable_dispersion)
     req(data_introducidos_dispersion())
     
-    # Verificar si la variable es cualitativa
     if (!is.numeric(data_introducidos_dispersion()[[input$variable_dispersion]])) {
       showModal(modalDialog(
         title = "Error",
@@ -593,7 +574,6 @@ server <- function(input, output, session) {
     
     data <- data_introducidos_dispersion()
     
-    # Ocultar la tabla de los datos introducidos para dispersión
     output$primeras_filas_dispersion <- renderTable(NULL)
     
     funciones_dispersion <- list()
@@ -637,7 +617,6 @@ server <- function(input, output, session) {
     }
     
     if ("momento.central" %in% input$dispersion) {
-      # Verificar si se ha especificado el orden del momento central
       if (is.null(input$orden_momento_central)) {
         showModal(modalDialog(
           title = "Error",
@@ -700,7 +679,6 @@ server <- function(input, output, session) {
     req(input$variable_forma)
     req(data_introducidos_forma())
     
-    # Verificar si la variable es cualitativa
     if (!is.numeric(data_introducidos_forma()[[input$variable_forma]])) {
       showModal(modalDialog(
         title = "Error",
@@ -727,7 +705,6 @@ server <- function(input, output, session) {
     
     data3 <- data_introducidos_forma()
     
-    # Ocultar la tabla de los datos introducidos para forma
     output$primeras_filas_forma <- renderTable(NULL)
     
     medidas_seleccionadas <- input$forma
@@ -741,7 +718,7 @@ server <- function(input, output, session) {
           resultados <- medidas.forma(data3, variable = which(names(data3) == input$variable_forma),alternativa=TRUE)
         } else {
           medidas <- medidas.forma(data3, variable = which(names(data3) == input$variable_forma))
-          asimetria <- medidas["asimetria",] #CLAVEE PER A QUE ANARA "EL POSAR LA ","
+          asimetria <- medidas["asimetria",] 
           resultados[["Asimetria"]] <- asimetria 
           curtosis <- medidas["curtosis",]
           resultados[["Curtosis"]] <- curtosis
@@ -750,14 +727,14 @@ server <- function(input, output, session) {
         if (input$alternativa) {
           
           medidas <- medidas.forma(data3, variable = which(names(data3) == input$variable_forma), pesos = which(names(data3) == input$pesos_var3))
-          asimetria <- medidas["asimetria",] #CLAVEE PER A QUE ANARA "EL POSAR LA ","
+          asimetria <- medidas["asimetria",] 
           resultados[["Asimetria"]] <- asimetria 
           curtosis <- medidas["curtosis",]
           resultados[["Curtosis"]] <- curtosis
           
         } else {
           medidas <- medidas.forma(data3, variable = which(names(data3) == input$variable_forma), pesos = which(names(data3) == input$pesos_var3))
-          asimetria <- medidas["asimetria",] #CLAVEE PER A QUE ANARA "EL POSAR LA ","
+          asimetria <- medidas["asimetria",] 
           resultados[["Asimetria"]] <- asimetria 
           curtosis <- medidas["curtosis",]
           resultados[["Curtosis"]] <- curtosis
@@ -905,7 +882,6 @@ server <- function(input, output, session) {
     
   })
   
-  # Función para calcular la matriz de correlación
   calcular_matriz_correlacion <- function(data) {
     matriz_correlacion <- matriz.correlacion(data)
     return(matriz_correlacion)
@@ -915,7 +891,7 @@ server <- function(input, output, session) {
     output$primeras_filas_relacion <- renderTable(NULL)
   })
   
-  # Cuando se hace clic en el botón de calcular matriz de correlación
+  
   observeEvent(input$calcular_matriz_correlacion, {
     req(input$file_relacion, data_introducidos_relacion())
     
@@ -934,7 +910,6 @@ server <- function(input, output, session) {
     })
   })
   
-  # Función para calcular la matriz de covarianzas
   calcular_matriz_covarianzas <- function(data) {
     tipo2 <- input$tipo_covarianza2
     matriz_covarianzas <- matriz.covar(data, tipo = tipo2)
@@ -945,7 +920,6 @@ server <- function(input, output, session) {
     output$primeras_filas_relacion <- renderTable(NULL)
   })
   
-  # Cuando se hace clic en el botón de calcular matriz de correlación
   observeEvent(input$calcular_matriz_covarianzas, {
     req(input$file_relacion, data_introducidos_relacion())
     
@@ -1051,7 +1025,7 @@ server <- function(input, output, session) {
       y_max <- max(data[[var_depen]], na.rm = TRUE)
       
       output$regresion_simple_plot <- renderPlot({
-        plot(resultado$Graficos, xlim = c(x_min, x_max), ylim = c(y_min, y_max)) #FUNDAMENTAL EL $Graficos
+        plot(resultado$Graficos, xlim = c(x_min, x_max), ylim = c(y_min, y_max)) 
       })
       
       
@@ -1091,7 +1065,6 @@ server <- function(input, output, session) {
     
   }
   
-  # Cuando se hace clic en el botón de calcular regresión simple
   observeEvent(input$calcular_regresion_simple, {
     output$primeras_filas_relacion <- renderTable(NULL)
   })
@@ -1122,23 +1095,20 @@ server <- function(input, output, session) {
     )
     
     observe({
-      # Limpiar los outputs cuando se cambian las opciones de inferencia
+      
       if (input$inferencia_regresion_simple) {
         output$regresion_simple_output<- renderDT(NULL)
       }
     })
     
   })  
-
   
-  # Función para calcular el resumen estadístico descriptivo
+  
   calcular_resumen <- function(data) {
-    # Aquí debes reemplazar resumen.descriptivos() por tu función real
     resumen <- resumen.descriptivos(data)
     return(resumen)
   }
   
-  # Cuando se hace clic en el botón "Obtener resumen"
   observeEvent(input$obtener_resumen, {
     req(input$file_data)
     if (tools::file_ext(input$file_data$datapath) == "csv") {
@@ -1154,10 +1124,10 @@ server <- function(input, output, session) {
       ))
     }
     
-    # Lee el archivo CSV y calcula el resumen estadístico
+    
     resumen_estadistico <- calcular_resumen(datos)
     
-    # Renderiza la tabla resumen utilizando renderDT
+    
     output$tabla_resumen <- renderDT({
       datatable(resumen_estadistico)
     })
@@ -1189,12 +1159,12 @@ server <- function(input, output, session) {
   
   observeEvent(input$calcular_tablas_frecuencias, {
     req(input$file_tablas_frecuencias, input$var_filas, input$var_columnas, 
-        input$distribucion, input$frecuencias, data_introducidos_tablas_frecuencias())
+        input$distribucion, input$frecuencias,input$tipo, data_introducidos_tablas_frecuencias())
     
     output$primeras_filas_tablas_frecuencias <- renderTable(NULL)
     
     if ((is.numeric(data_introducidos_tablas_frecuencias()[[input$var_filas]]) && is.numeric(data_introducidos_tablas_frecuencias()[[input$var_columnas]])))
-      {
+    {
       
     } else {
       showModal(modalDialog(
@@ -1214,40 +1184,208 @@ server <- function(input, output, session) {
       return()
     }
     
+    if (!(input$tipo %in% c(1, 2))) {
+      showModal(modalDialog(
+        title = "Error",
+        "El valor ingresado para 'Condicionada por columnas o filas' debe ser 1 o 2.", 
+        easyClose = TRUE
+      ))
+      return()
+    }
     
-    
-    # Obtener los datos y parámetros
     data <- data_introducidos_tablas_frecuencias()
     var_filas <- input$var_filas
     var_columnas <- input$var_columnas
     distribucion <- input$distribucion
     frecuencias <- input$frecuencias
+    tipo<-input$tipo
     
-    # Calcular la tabla de frecuencias bidimensional
+    if (distribucion == "condicionada" & frecuencias == "absolutas") {
+      distribucion <- "cruzada"
+      frecuencias <- "absolutas"
+    }
+    
+    tabla.bidimensional<- function(x,
+                                   var_filas = NULL,
+                                   var_columnas = NULL,
+                                   distribucion = c("cruzada","condicionada"),
+                                   frecuencias = c("absolutas","relativas"),
+                                   exportar = FALSE,
+                                   tipo=1){
+      
+      distribucion <- tolower(distribucion)
+      distribucion <- match.arg(distribucion)
+      
+      frecuencias <- tolower(frecuencias)
+      frecuencias <- match.arg(frecuencias)
+      
+      x <- data.frame(x)
+      varnames <- names(x)
+      
+      if(length(x)<2){
+        stop("El conjunto de datos seleccionada solo tiene una variable.")
+      }
+      
+      if(is.null(var_filas) | is.null(var_columnas)){
+        stop("Debes seleccionar la variable fila y columna")
+      }
+      
+      if(is.numeric(var_filas)){
+        if(var_filas<=length(x)){
+          var_filas <- var_filas}
+        else{
+          stop("Selecci\u00f3n err\u00f3nea de variable")
+        }
+      }
+      
+      if(is.character(var_filas)){
+        if(var_filas %in% varnames){
+          var_filas = match(var_filas,varnames)
+        } else {
+          stop("El nombre de la variable por filas no es v\u00e1lido")
+        }
+      }
+      
+      
+      if(is.numeric(var_columnas)){
+        if(var_columnas<=length(x)){
+          var_columnas <- var_columnas}
+        else{
+          stop("Selecci\u00f3n err\u00f3nea de variable")
+        }
+      }
+      
+      if(is.character(var_columnas)){
+        if(var_columnas %in% varnames){
+          var_columnas = match(var_columnas,varnames)
+        } else {
+          stop("El nombre de la variable por columna no es v\u00e1lido")
+        }
+      }
+      
+      if(var_filas == var_columnas){
+        stop("La variable por fila y columna es la misma variable")
+      }
+      
+      variable <- c(var_filas,var_columnas)
+      
+      
+      x <- x[,variable] %>% as.data.frame()
+      names(x) <- varnames[variable]
+      varnames <- names(x)
+      
+      clase <- sapply(x, class)
+      
+      if (!all(clase %in% c("numeric","integer","factor","logic"))){
+        stop("No puede construirse la tabla de frecuencias, alguna variable seleccionada es car\u00e1cter")
+      }
+      
+      
+      if(frecuencias == "absolutas"){
+        
+        if(distribucion == "cruzada"){
+          tabla <- x %>%
+            table()
+          tabla <- addmargins(tabla)
+          
+        } else{
+          
+          tipoelegido = as.numeric(tipo)
+          
+          tabla2 <- x %>%
+            table()
+          namesfilas <- row.names(tabla2)
+          namescolumnas <- colnames(tabla2)
+          
+          if(tipoelegido == 1){
+            tabla_aux <- x %>%
+              select(tipoelegido) %>%
+              group_by(filas) %>%
+              count() %>%
+              ungroup() %>%
+              select(n)
+            n = length(namescolumnas)
+            tabla_aux <- cbind(tabla_aux, replicate(n-1,tabla_aux$n))
+            
+          } else{
+            tabla_aux <- x %>%
+              select(tipoelegido) %>%
+              group_by(columnas) %>%
+              count() %>%
+              ungroup() %>%
+              select(n)
+            
+            n = length(namesfilas)
+            tabla_aux <- cbind(tabla_aux, replicate(n-1,tabla_aux$n)) %>%
+              t()
+          }
+          
+          tabla <-  tabla_aux * as.matrix(prop.table(tabla2,tipoelegido))
+          row.names(tabla) <- namesfilas
+          colnames(tabla) <- namescolumnas
+          
+        }
+        
+      } else{
+        
+        if(distribucion == "cruzada"){
+          tabla <- x %>%
+            table()
+          tabla <- prop.table(tabla)
+          tabla <- addmargins(tabla)
+          
+        } else{
+          
+          tipoelegido = as.numeric(tipo)
+          
+          if(tipoelegido == 1){
+            tabla2 <- x %>%
+              table()
+            tabla <- prop.table(tabla2,2)
+          } else{
+            tabla2 <- x %>%
+              table()
+            tabla <- prop.table(tabla2,1)
+          }
+        }
+      }
+      
+      tabla <- as.data.frame.matrix(tabla)
+      
+      
+      if (exportar) {
+        filename <- paste("Tabla cruzada de ", variable[1]," y ", variable[2], " (", Sys.time(), ").xlsx", sep = "")
+        filename <- gsub(" ", "_", filename)
+        filename <- gsub(":", ".", filename)
+        rio::export(tabla, rowNames = TRUE, file = filename)
+      }
+      
+      return(tabla)
+      
+    }
+    
     tabla_frecuencias <- tabla.bidimensional(
       data,
       var_filas = var_filas,
       var_columnas = var_columnas,
       distribucion = distribucion,
-      frecuencias = frecuencias
+      frecuencias = frecuencias,
+      tipo=tipo
     )
     
-    # Añadir la variable de fila como una columna adicional
-    tabla_frecuencias <- cbind(" " = rownames(tabla_frecuencias), tabla_frecuencias)
-    rownames(tabla_frecuencias) <- NULL  # Eliminar los nombres de fila
     
-    # Mostrar la tabla de frecuencias bidimensional
+    tabla_frecuencias <- cbind(" " = rownames(tabla_frecuencias), tabla_frecuencias)
+    rownames(tabla_frecuencias) <- NULL  
     
     output$tabla_frecuencias_bidimensional<- renderTable(tabla_frecuencias)
   })
   
-  #TABLA FRECUENCIAS UNIDIMENSIONAL
   
   tabla.frecuencias<- function(x,
-                                     eliminar.na = TRUE,
-                                     grafico = FALSE,
-                                     exportar = FALSE,
-                                     agrupar=TRUE){
+                               eliminar.na = TRUE,
+                               grafico = FALSE,
+                               exportar = FALSE,
+                               agrupar=TRUE){
     x <- as.data.frame(x)
     
     varnames <- colnames(x)
@@ -1273,7 +1411,7 @@ server <- function(input, output, session) {
     x <- as.data.frame(x) %>%
       dplyr::select(all_of(variable))
     
-    y <- varnames[variable] # nombre de la variable seleccionada
+    y <- varnames[variable] 
     
     clase <- sapply(x, class)
     
@@ -1293,7 +1431,7 @@ server <- function(input, output, session) {
     
     if(valores_distintos >= 20){
       
-      # tabla de frecuencias de valores agrupados
+      
       
       if(agrupar == TRUE){
         clase <- sapply(x, class)
@@ -1328,17 +1466,13 @@ server <- function(input, output, session) {
       agrupar = FALSE
     }
     
-    # tabla de frecuencias
-    
-    # ordena de menor a mayor los valores
     tabla <- x %>% dplyr::arrange(x) %>%
-      dplyr::group_by_at(y) %>%   # en lugar de group_by(.dots=y)
+      dplyr::group_by_at(y) %>%   
       dplyr::count() %>%
       dplyr::ungroup()
     
-    names(tabla) <- c(y,"ni") # nombres de las columnas de tabla
+    names(tabla) <- c(y,"ni") 
     
-    # calcula las frecuencias
     tabla <- tabla %>%
       dplyr::mutate(Ni = cumsum(ni),
                     fi = ni / sum(ni),
@@ -1405,13 +1539,13 @@ server <- function(input, output, session) {
                x = variables[1],
                y = "") +
           theme(
-            panel.background = element_rect(fill = "transparent"), # bg of the panel
-            plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
-            panel.grid.major = element_blank(), # get rid of major grid
-            panel.grid.minor = element_blank(), # get rid of minor grid
-            legend.background = element_blank(), # get rid of legend bg
-            legend.box.background = element_blank(), # get rid of legend panel bg
-            legend.key = element_blank(), # get rid of key legend fill, and of the surrounding
+            panel.background = element_rect(fill = "transparent"), 
+            plot.background = element_rect(fill = "transparent", color = NA), 
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(), 
+            legend.background = element_blank(), 
+            legend.box.background = element_blank(), 
+            legend.key = element_blank(), 
             axis.ticks.x=element_blank(),
             axis.line.y = element_blank(),
             axis.ticks.y=element_blank(),
@@ -1443,13 +1577,13 @@ server <- function(input, output, session) {
                  x = variables[1],
                  y = "") +
             theme(
-              panel.background = element_rect(fill = "transparent"), # bg of the panel
-              plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
-              panel.grid.major = element_blank(), # get rid of major grid
-              panel.grid.minor = element_blank(), # get rid of minor grid
-              legend.background = element_blank(), # get rid of legend bg
-              legend.box.background = element_blank(), # get rid of legend panel bg
-              legend.key = element_blank(), # get rid of key legend fill, and of the surrounding
+              panel.background = element_rect(fill = "transparent"), 
+              plot.background = element_rect(fill = "transparent", color = NA), 
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(), 
+              legend.background = element_blank(), 
+              legend.box.background = element_blank(), 
+              legend.key = element_blank(), 
               axis.ticks.x=element_blank(),
               axis.line.y = element_blank(),
               axis.ticks.y=element_blank(),
@@ -1469,13 +1603,13 @@ server <- function(input, output, session) {
                  y = "") +
             scale_x_discrete(breaks = valores_ordenados) +
             theme(
-              panel.background = element_rect(fill = "transparent"), # bg of the panel
-              plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
-              panel.grid.major = element_blank(), # get rid of major grid
-              panel.grid.minor = element_blank(), # get rid of minor grid
-              legend.background = element_blank(), # get rid of legend bg
-              legend.box.background = element_blank(), # get rid of legend panel bg
-              legend.key = element_blank(), # get rid of key legend fill, and of the surrounding
+              panel.background = element_rect(fill = "transparent"), 
+              plot.background = element_rect(fill = "transparent", color = NA), 
+              panel.grid.major = element_blank(), 
+              panel.grid.minor = element_blank(), 
+              legend.background = element_blank(), 
+              legend.box.background = element_blank(), 
+              legend.key = element_blank(), 
               axis.ticks.x=element_blank(),
               axis.line.y = element_blank(),
               axis.ticks.y=element_blank(),
@@ -1486,7 +1620,7 @@ server <- function(input, output, session) {
         
       }
       
-    } # cierra grafico
+    } 
     
     if(grafico){
       
@@ -1530,7 +1664,6 @@ server <- function(input, output, session) {
   })
   
   
-  # Función para mostrar el histograma si se selecciona la opción
   output$histograma <- renderPlot({
     req(input$file_tablas_frecuencias)
     req(input$var_tabla_unidimensional)
@@ -1587,7 +1720,7 @@ server <- function(input, output, session) {
       grafico = grafico_series
     )
     
-    # Si no se desea mostrar el gráfico, retornar solo el resumen de la serie temporal
+    
     if (!grafico_series) {
       return(list(
         Medias_moviles = serie_temporal$Medias_moviles,
@@ -1618,10 +1751,9 @@ server <- function(input, output, session) {
     req(input$file_series_temporales, input$var_serie, input$inicio_anual, 
         input$periodo_inicio,input$prediccion_tendencia,data_introducidos_series())
     
-    # Renderizar la tabla de primeras observaciones como NULL
+    
     output$primeras_observaciones_series <- renderTable(NULL)
     
-    # Comprobar si la variable seleccionada es cuantitativa
     if (!is.numeric(data_introducidos_series()[[input$var_serie]])) {
       showModal(modalDialog(
         title = "Error",
@@ -1642,8 +1774,6 @@ server <- function(input, output, session) {
     )
     
     
-    
-    # Mostrar los resultados
     output$medias_moviles_output <- renderTable({
       head(serie_temporal_result$Medias_moviles, 5)
     })
@@ -1656,7 +1786,6 @@ server <- function(input, output, session) {
       head(serie_temporal_result$Datos_ajuste_tendencia, 5)
     })
     
-    # Añadir la variable de fila como una columna adicional
     serie_temporal_result$Modelo_ajuste <- cbind(" " = rownames(serie_temporal_result$Modelo_ajuste), serie_temporal_result$Modelo_ajuste)
     rownames(serie_temporal_result$Modelo_ajuste) <- NULL
     
