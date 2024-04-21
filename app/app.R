@@ -981,7 +981,7 @@ server <- function(input, output, session) {
     else if(!grafico && inferencia) {
       
       output$regresion_simple_output_parcial <- renderDT({
-        datatable(resultado$Resultados.parciales,
+        datatable(round(resultado$Resultados.parciales,3),
                   options = list(
                     dom = 't',
                     paging = FALSE,
@@ -1003,7 +1003,7 @@ server <- function(input, output, session) {
       })
       
       output$regresion_simple_output_Modelo <- renderDT({
-        datatable(resultado$Modelo.estimado,
+        datatable(round(resultado$Modelo.estimado,3),
                   options = list(
                     dom = 't',
                     paging = FALSE,
@@ -1030,7 +1030,7 @@ server <- function(input, output, session) {
       
       
       output$regresion_simple_output_parcial <- renderDT({
-        datatable(resultado$Resultados.parciales,
+        datatable(round(resultado$Resultados.parciales,3),
                   options = list(
                     dom = 't',
                     paging = FALSE,
@@ -1052,7 +1052,7 @@ server <- function(input, output, session) {
       })
       
       output$regresion_simple_output_Modelo <- renderDT({
-        datatable(resultado$Modelo.estimado,
+        datatable(round(resultado$Modelo.estimado,3),
                   options = list(
                     dom = 't',
                     paging = FALSE,
@@ -1801,3 +1801,4 @@ server <- function(input, output, session) {
 
 # Ejecutar la aplicación
 shinyApp(ui = ui, server = server)
+
