@@ -963,7 +963,7 @@ server <- function(input, output, session) {
       y_max <- max(data[[var_depen]], na.rm = TRUE)
       
       output$regresion_simple_plot <- renderPlot({
-        plot(resultado$Graficos, xlim = c(x_min, x_max), ylim = c(y_min, y_max)) #FUNDAMENTAL EL $Graficos
+        plot(resultado$Graficos, xlim = c(x_min, x_max), ylim = c(y_min, y_max)) 
       })
       
       output$regresion_simple_output <- renderDT({
